@@ -3,21 +3,30 @@ use mnist::*;
 use ndarray::prelude::*;
 
 #[allow(dead_code)]
-fn load_mnist(normalize : bool) -> (Array3<f32>, Array2<f32>, Array3<f32>, Array2<f32>){
-   // Deconstruct the returned Mnist struct.
+fn load_mnist(normalize : bool, one_hot_encoded : bool) -> (Array3<f32>, Array2<f32>, Array3<f32>, Array2<f32>){
+    // Deconstruct the returned Mnist struct.
     let Mnist {
         trn_img,
         trn_lbl,
         tst_img,
         tst_lbl,
         ..
-    } = MnistBuilder::new()
-        .label_format_digit()
-        .training_set_length(50_000)
-        .validation_set_length(10_000)
-        .test_set_length(10_000)
-        .finalize();
-    
+    } = if one_hot_encoded {
+        MnistBuilder::new()
+            .label_format_digit()
+            .training_set_length(50_000)
+            .validation_set_length(10_000)
+            .test_set_length(10_000)  
+            .finalize()
+    } else {
+        MnistBuilder::new()
+            .label_format_digit()
+            .training_set_length(50_000)
+            .validation_set_length(10_000)
+            .test_set_length(10_000)
+            .label_format_one_hot()
+            .finalize()
+    };
     let (train_data, test_data) = if normalize {
         (
             Array3::from_shape_vec((50_000, 28, 28), trn_img)
@@ -56,19 +65,13 @@ fn flatten(data : Array3<f32>) -> Array2<f32> {
     data.into_shape((n, m)).unwrap()
 }
 
-fn one_hot_encoded(data : Array2<f32>, n : usize) -> Array2<u8>{
-    let shape = data.shape();
-    if shape[1] != 1{
-        panic!("Data should has a form of (n, 1)");
-    }
-    let mut res = Array2::zeros((shape[0], n));
-    for (idx, v) in data.iter().enumerate(){
-        let u = *v as usize;
-        if u >= n {
-            panic!("Data value should be smaller than {}", n);
-        }
+#[cfg(test)]
+mod test{
+    use super::*;
 
-        res[[idx, u]] = 1;
+    #[test]
+    fn test_read(){
+        let dataset = load_mnist(false, false);
+        println!("{:?}", dataset.0);
     }
-    return res;
 }
