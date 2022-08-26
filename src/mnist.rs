@@ -17,6 +17,7 @@ fn load_mnist(normalize : bool, one_hot_encoded : bool) -> (Array3<f32>, Array2<
             .training_set_length(50_000)
             .validation_set_length(10_000)
             .test_set_length(10_000)  
+            .label_format_one_hot()
             .finalize()
     } else {
         MnistBuilder::new()
@@ -24,7 +25,6 @@ fn load_mnist(normalize : bool, one_hot_encoded : bool) -> (Array3<f32>, Array2<
             .training_set_length(50_000)
             .validation_set_length(10_000)
             .test_set_length(10_000)
-            .label_format_one_hot()
             .finalize()
     };
     let (train_data, test_data) = if normalize {
@@ -46,12 +46,13 @@ fn load_mnist(normalize : bool, one_hot_encoded : bool) -> (Array3<f32>, Array2<
                 .map(|x| *x as f32)
         )
     };
-   
-    let train_labels: Array2<f32> = Array2::from_shape_vec((50_000, 1), trn_lbl)
+    
+    let n = if one_hot_encoded { 10 } else { 1 };
+    let train_labels: Array2<f32> = Array2::from_shape_vec((50_000, n), trn_lbl)
         .expect("Error converting training labels to Array2 struct")
         .map(|x| *x as f32);
 
-    let test_labels: Array2<f32> = Array2::from_shape_vec((10_000, 1), tst_lbl)
+    let test_labels: Array2<f32> = Array2::from_shape_vec((10_000, n), tst_lbl)
         .expect("Error converting testing labels to Array2 struct")
         .map(|x| *x as f32);   
     
