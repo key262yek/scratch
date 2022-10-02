@@ -1,12 +1,12 @@
 use ndarray::Array1;
 
 #[allow(dead_code)]
-fn node(x: &Array1<f64>, w: &Array1<f64>, h: &dyn Fn(f64) -> f64) -> f64 {
+fn node(x: &Array1<f32>, w: &Array1<f32>, h: &dyn Fn(f32) -> f32) -> f32 {
     h(x.dot(w))
 }
 
 #[allow(dead_code)]
-fn step_fn(x: f64) -> f64 {
+fn step_fn(x: f32) -> f32 {
     if x <= 0.0 {
         return 0.0;
     } else {
@@ -15,24 +15,24 @@ fn step_fn(x: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn step_fn_arr(mut x: Array1<f64>) -> Array1<f64> {
+fn step_fn_arr(mut x: Array1<f32>) -> Array1<f32> {
     x.mapv_inplace(step_fn);
     x
 }
 
 #[allow(dead_code)]
-fn sigmoid(x: f64) -> f64 {
+fn sigmoid(x: f32) -> f32 {
     return 1.0 / (1.0 + (-x).exp());
 }
 
 #[allow(dead_code)]
-fn sigmoid_arr(mut x: Array1<f64>) -> Array1<f64> {
+fn sigmoid_arr(mut x: Array1<f32>) -> Array1<f32> {
     x.mapv_inplace(sigmoid);
     x
 }
 
 #[allow(dead_code)]
-fn relu(x: f64) -> f64 {
+fn relu(x: f32) -> f32 {
     if x <= 0.0 {
         return 0.0;
     } else {
@@ -41,14 +41,14 @@ fn relu(x: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn relu_arr(mut x: Array1<f64>) -> Array1<f64> {
+fn relu_arr(mut x: Array1<f32>) -> Array1<f32> {
     x.mapv_inplace(relu);
     x
 }
 
 #[allow(dead_code)]
-fn softmax_arr(mut x: Array1<f64>) -> Array1<f64> {
-    let max = x.fold(f64::NEG_INFINITY, |a, &b| if a < b { b } else { a });
+fn softmax_arr(mut x: Array1<f32>) -> Array1<f32> {
+    let max = x.fold(f32::NEG_INFINITY, |a, &b| if a < b { b } else { a });
     x.mapv_inplace(|s| (s - max).exp());
 
     let sum = x.sum();
@@ -77,7 +77,7 @@ mod test {
 
         assert_abs_diff_eq!(test1, ans, epsilon = 1e-5);
 
-        let test2 = softmax_arr(array![1010f64, 1000f64, 990f64]);
+        let test2 = softmax_arr(array![1010f32, 1000f32, 990f32]);
         let ans = array![9.999546e-1, 4.53978686e-5, 2.06106005e-9];
 
         assert_abs_diff_eq!(test2, ans, epsilon = 1e-5);

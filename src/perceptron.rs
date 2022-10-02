@@ -1,7 +1,7 @@
 use ndarray::{arr1, Array1};
 
 #[allow(dead_code)]
-fn single(x: Array1<f64>, w: Array1<f64>, b: f64) -> f64 {
+fn single(x: Array1<f32>, w: Array1<f32>, b: f32) -> f32 {
     let t = b + x.dot(&w);
     if t < 0.0 {
         return 0.0;
@@ -11,7 +11,7 @@ fn single(x: Array1<f64>, w: Array1<f64>, b: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn and(x1: f64, x2: f64) -> f64 {
+fn and(x1: f32, x2: f32) -> f32 {
     let x = arr1(&[x1, x2]);
     let w = arr1(&[0.5, 0.5]);
     let b = -0.7;
@@ -20,7 +20,7 @@ fn and(x1: f64, x2: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn nand(x1: f64, x2: f64) -> f64 {
+fn nand(x1: f32, x2: f32) -> f32 {
     let x = arr1(&[x1, x2]);
     let w = arr1(&[-0.5, -0.5]);
     let b = 0.7;
@@ -29,7 +29,7 @@ fn nand(x1: f64, x2: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn or(x1: f64, x2: f64) -> f64 {
+fn or(x1: f32, x2: f32) -> f32 {
     let x = arr1(&[x1, x2]);
     let w = arr1(&[0.5, 0.5]);
     let b = -0.2;
@@ -38,7 +38,7 @@ fn or(x1: f64, x2: f64) -> f64 {
 }
 
 #[allow(dead_code)]
-fn xor(x1: f64, x2: f64) -> f64 {
+fn xor(x1: f32, x2: f32) -> f32 {
     let s1 = nand(x1, x2);
     let s2 = or(x1, x2);
     return and(s1, s2);

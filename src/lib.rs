@@ -1,3 +1,4 @@
+pub mod learning;
 pub mod mnist;
 pub mod neuralnet;
 pub mod perceptron;
